@@ -13,8 +13,9 @@ import requests
 from wx import ImageFromStream, BitmapFromImage, EmptyIcon
 from bs4 import BeautifulSoup as Soup
 
-# Fetch a unique key on update
-# Include license file
+# Todo
+# Schedule loop
+# Fetch update
 # Make sure only one instance is running
 
 class WebHandler(object):
