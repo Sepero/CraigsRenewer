@@ -10,7 +10,6 @@ import sys
 import webbrowser
 import zlib
 import requests
-from wx import ImageFromStream, BitmapFromImage, EmptyIcon
 from bs4 import BeautifulSoup as Soup
 
 # Todo
@@ -49,6 +48,9 @@ class WebHandler(object):
             raise
     
     def open_browser(self=None, url=''):
+        """
+        Open a webpage in the desktop default browser like Firefox.
+        """
         webbrowser.open(url, new=1)
 
 class Updater(object):
