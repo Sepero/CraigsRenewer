@@ -14,6 +14,7 @@ from bs4 import BeautifulSoup as Soup
 
 # Todo
 # Schedule loop
+# Make output more friendly
 # Fetch update
 # Make sure only one instance is running
 
