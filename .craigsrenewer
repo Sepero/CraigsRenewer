@@ -1,8 +1,8 @@
 # This is an example login information file.
-# Copy this file to your home directory ~/ and replace home
+# Copy this file to your home directory ~/ and fill in the proper user & pass values.
 
 [useragent]
-Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:26.0) Gecko/20100101 Firefox/26.0
+name: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:26.0) Gecko/20100101 Firefox/26.0
 
 [account1]
 user: username
