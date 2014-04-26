@@ -113,7 +113,10 @@ class RenewHandler(object):
             # Log into website.
             page = self.log_into_site(account)
             # Is page requesting captcha.
-            self.check_for_captcha(page)
+            if self.check_for_captcha(page):
+                print "Captcha was found. Please login to your account manually."
+                print "account %s" % account['user']
+                continue
             # Find items to renew.
             listings = self.get_renewable_listings(page)
             # Renew each item.
@@ -163,6 +166,7 @@ class RenewHandler(object):
     def check_for_captcha(self, page):
         result = Soup(page).find('div', id="recaptcha_table")
         logger.info('Captcha result: %s' % result)
+        return result
     
     def get_renewable_listings(self, page):
         """
