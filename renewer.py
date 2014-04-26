@@ -9,8 +9,12 @@ import pickle
 import sys
 import webbrowser
 import zlib
+
+#try
 import requests
 from bs4 import BeautifulSoup as Soup
+#except
+        #print useful output
 
 # Todo
 # Make output more friendly
@@ -28,8 +32,8 @@ class WebHandler(object):
         logger.debug("open_url() %s %s", method, url)
         if data:
             logger.debug("URL data: %s" % data)
-        try:
-            for loop in range(6): # Retry for 1 minute.
+        try: # TODO: Move loop outside try/except
+            for loop in range(6): # Retry 6 up to times, 10 seconds each try.
                 if method.lower() == 'get':
                     pull = self.session.get
                 else:
@@ -75,28 +79,28 @@ class Listing(object):
 class RenewHandler(object):
     config_files = [] # List of possible config file locations.
     config_files.append(os.path.join(os.path.expanduser("~"), '.craigsrenewer'))
-    config_files.append('.craigsrenewer')
+    config_files.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '.craigsrenewer'))
     def __init__(self):
-        file_read_success = None
-        self.config = ConfigParser.SafeConfigParser()
         for cfile in self.config_files:
             try:
-                file_read_success = self.config.read(cfile)
-                #file_read_success = self.config.read("smurf")
+                self.config = ConfigParser.SafeConfigParser()
+                self.config.readfp(open(cfile), cfile)
+                print "Using config file: %s" % cfile
                 break
             except IOError:
-                pass
+                logger.debug("Error reading: %s" % cfile, exc_info=True)
         
-        if not file_read_success:
+        if not self.config.sections():
             logging.error("ERROR: No configuration file found. %s" % self.config_files)
             raise IOError("No configuration file found.")
-        logger.debug("Configuration file read: %s" % file_read_success)
         
         # This variable is a flag to let the GUI know if backend is currently renewing.
         self.processing = False
     
     def begin_renew_process(self):
-        logger.info("Beginning renew process")
+        """ Starts loop of renewing listings on all accounts. """
+        print "Beginning renewal processes."
+        logger.info("Beginning renew processes.")
         
         # This variable is a flag to let the GUI know if backend is currently renewing.
         self.processing = True
@@ -119,6 +123,10 @@ class RenewHandler(object):
         self.processing = False
     
     def get_login_accounts(self):
+        """
+        Extracts accounts and info from config and generates a list
+        of dictionaries.
+        """
         config = self.config
         accounts = []
         for section in config.sections():
@@ -130,6 +138,11 @@ class RenewHandler(object):
         return accounts
     
     def log_into_site(self, account):
+        """
+        *account* is a Python dictionary containing login information
+        for a single account. It will login using the information.
+        Returns the page after attempting login.
+        """
         url = "https://accounts.craigslist.org/login"
         page = self.web.open_url(url)
         
@@ -194,20 +207,23 @@ class RenewHandler(object):
 
 def main():
     global logger
-    logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
     
     renewhand = RenewHandler()
     
     if '--debug' in sys.argv:
         logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.WARN)
     
-    # If --no-gui is set, then run renew once in commandline mode.
-    if '--no-gui' in sys.argv:
-        renewhand.begin_renew_process()
-        Updater().check()
-        exit()
-    
+    renewhand.begin_renew_process()
+    Updater().check()
+    exit()
+
 
 if __name__ == '__main__':
+    import signal
+    # This allows the program to exit quickly when pressing ctrl+c.
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    
     main()

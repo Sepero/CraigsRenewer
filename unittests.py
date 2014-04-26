@@ -25,8 +25,13 @@ class RenewTests(unittest.TestCase):
         renewer.logger = logger
         self.rh = renewer.RenewHandler()
         #self.creds = self.rh.get_login_credentials()
+        if "--download" in sys.argv:
+            self.first_test1_get_login_page()
     
-    def test1_get_login_page(self):
+    def test_failed_login(self):
+        pass
+    
+    def first_test1_get_login_page(self):
         # Get first login account available from config file.
         account0 = self.rh.get_login_accounts()[0]
         self.rh.web = renewer.WebHandler(self.rh.config.get("useragent", "name"))
@@ -34,10 +39,10 @@ class RenewTests(unittest.TestCase):
         
         # Save management page to a file.
         # We may need to review/validate the html if testing fails.
-        save_page('page2.html', page)
+        save_page('listing.html', page)
     
     def test2_find_listings(self):
-        page = load_page('page2.html')
+        page = load_page('listing.html')
         
         # Verify the page looks correct (user logged in).
         assert("posting title" in page)
@@ -53,6 +58,10 @@ class RenewTests(unittest.TestCase):
             assert(l.data.has_key('crypt'))
         except IndexError:
             print "===NO RENEWABLE LISTINGS FOUND==="
+    
+    def test3_get_renewable_listings(self):
+        page = load_page('listing.html')
+        self.rh.get_renewable_listings(page)
     
     def tearDown(self):
         pass
