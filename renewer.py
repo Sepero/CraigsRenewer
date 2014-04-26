@@ -111,20 +111,24 @@ class RenewHandler(object):
             # Create web browser session.
             self.web = WebHandler(self.config.get("useragent", "name"))
             # Log into website.
-            print "Logging in as account %s" % account['user']
+            print
+            print "Logging in as account '%s'." % account['user']
             page = self.log_into_site(account)
             # Is page requesting captcha.
             if self.check_for_captcha(page):
                 print "Captcha was found. Please login to your account manually."
-                print "account %s" % account['user']
+                print "account '%s'" % account['user']
                 continue
             # Verify that login was successful.
             if not self.is_login_success(page):
-                print "Account %s did not appear to login correctly." % account['user']
+                print "Account '%s' did not appear to login correctly." % account['user']
             # Find items to renew.
             listings = self.get_renewable_listings(page)
             # Renew each item.
-            self.renew_listings(listings)
+            if not listings:
+                print "No listings to renew."
+            else:
+                self.renew_listings(listings)
         
         # This variable is a flag to let the GUI know if backend is currently renewing.
         self.processing = False
@@ -169,11 +173,11 @@ class RenewHandler(object):
     
     def check_for_captcha(self, page):
         result = Soup(page).find('div', id="recaptcha_table")
-        logger.info('Captcha result: %s' % result)
+        logger.info("Captcha result: %s" % result)
         return result
     
     def is_login_success(self, page):
-        return Soup(page).find('p', text='Showing all postings'):
+        return Soup(page).find('p', text='Showing all postings')
     
     def get_renewable_listings(self, page):
         """
@@ -227,8 +231,6 @@ def main():
     
     if '--debug' in sys.argv:
         logging.basicConfig(level=logging.DEBUG)
-    else:
-        logging.basicConfig(level=logging.WARN)
     
     renewhand.begin_renew_process()
     Updater().check()
