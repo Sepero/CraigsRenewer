@@ -109,7 +109,11 @@ class RenewHandler(object):
         print "Beginning renewal processes for %d accounts." % len(accounts)
         for account in accounts:
             # Create web browser session.
-            self.web = WebHandler(self.config.get("useragent", "name"))
+            if self.config.has_option("useragent", "name"):
+                self.web = WebHandler(self.config.get("useragent", "name"))
+            else:
+                self.web = WebHandler("")
+            
             # Log into website.
             print
             print "Logging in as account '%s'." % account['user']

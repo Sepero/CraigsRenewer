@@ -8,7 +8,7 @@ import sys
 import unittest
 import renewer
 
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 def save_page(name='page.html', string=""):
@@ -25,13 +25,15 @@ class RenewTests(unittest.TestCase):
         renewer.logger = logger
         self.rh = renewer.RenewHandler()
         #self.creds = self.rh.get_login_credentials()
-        if "--download" in sys.argv:
-            self.first_test1_get_login_page()
     
     def test_failed_login(self):
-        pass
+        account = { 'user': 'fakeuser', 'pass': 'fakepass' }
+        rh = renewer.RenewHandler()
+        rh.web = renewer.WebHandler("")
+        page = rh.log_into_site(account)
+        self.assertFalse(rh.is_login_success(page))
     
-    def first_test1_get_login_page(self):
+    def test1_get_login_page(self):
         # Get first login account available from config file.
         account0 = self.rh.get_login_accounts()[0]
         self.rh.web = renewer.WebHandler(self.rh.config.get("useragent", "name"))
