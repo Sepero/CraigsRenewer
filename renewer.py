@@ -99,7 +99,6 @@ class RenewHandler(object):
     
     def begin_renew_process(self):
         """ Starts loop of renewing listings on all accounts. """
-        print "Beginning renewal processes."
         logger.info("Beginning renew processes.")
         
         # This variable is a flag to let the GUI know if backend is currently renewing.
@@ -107,16 +106,21 @@ class RenewHandler(object):
         
         # Get login accounts from config.
         accounts = self.get_login_accounts()
+        print "Beginning renewal processes for %d accounts." % len(accounts)
         for account in accounts:
             # Create web browser session.
             self.web = WebHandler(self.config.get("useragent", "name"))
             # Log into website.
+            print "Logging in as account %s" % account['user']
             page = self.log_into_site(account)
             # Is page requesting captcha.
             if self.check_for_captcha(page):
                 print "Captcha was found. Please login to your account manually."
                 print "account %s" % account['user']
                 continue
+            # Verify that login was successful.
+            if not self.is_login_success(page):
+                print "Account %s did not appear to login correctly." % account['user']
             # Find items to renew.
             listings = self.get_renewable_listings(page)
             # Renew each item.
@@ -168,6 +172,9 @@ class RenewHandler(object):
         logger.info('Captcha result: %s' % result)
         return result
     
+    def is_login_success(self, page):
+        return Soup(page).find('p', text='Showing all postings'):
+    
     def get_renewable_listings(self, page):
         """
         Scrape page for renewable listings.
@@ -180,6 +187,7 @@ class RenewHandler(object):
             url = item.parent['action']
             
             data = {}
+            # for subitem in Soup(item).findAll('input'):
             while item:
                 # Get name/value pairs for every nested input inside a form.
                 data[item['name']] = item['value']
@@ -204,8 +212,10 @@ class RenewHandler(object):
             try:
                 logging.debug("tmplisting.data %s" % tmplisting.data)
                 self.web.open_url(tmplisting.url, 'post', tmplisting.data)
+                print "Update success: %s" % tmplisting.title
                 logging.info("Update success: %s" % tmplisting.title)
             except:
+                print "Update failed: %s" % tmplisting.title
                 logging.warning("Update failed: %s" % tmplisting.title)
                 raise
 
