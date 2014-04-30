@@ -21,6 +21,9 @@ from bs4 import BeautifulSoup as Soup
 # Fetch update
 # Make sure only one instance is running
 
+global logger
+logger = logging.getLogger(__name__)
+
 class WebHandler(object):
     def __init__(self, useragent=""):
         self.session = requests.Session()
@@ -227,9 +230,6 @@ class RenewHandler(object):
                 raise
 
 def main():
-    global logger
-    logger = logging.getLogger(__name__)
-    
     renewhand = RenewHandler()
     
     if '--debug' in sys.argv:
