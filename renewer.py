@@ -18,8 +18,8 @@ except
     raise
 
 # Todo
+# Check for update
 # Schedule loop
-# Fetch update
 # Make sure only one instance is running
 
 global logger
