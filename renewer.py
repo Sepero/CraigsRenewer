@@ -22,7 +22,7 @@ except:
 # Schedule loop
 # Make sure only one instance is running
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 class WebHandler(object):
     def __init__(self, useragent=""):
@@ -31,25 +31,25 @@ class WebHandler(object):
         self.session.headers['User-Agent'] = useragent
 
     def open_url(self, url, method='get', data='', save_file=None):
-        logger.debug("open_url() %s %s", method, url)
+        LOGGER.debug("open_url() %s %s", method, url)
         if data:
-            logger.debug("URL data: %s" % data)
+            LOGGER.debug("URL data: %s", data)
         try: # TODO: Move loop outside try/except
             for loop in range(6): # Retry 6 up to times, 10 seconds each try.
                 if method.lower() == 'get':
                     pull = self.session.get
                 else:
                     pull = self.session.post
-                r = pull(url, data=data, timeout=10)
+                response = pull(url, data=data, timeout=10)
 
-                if r.status_code != 200:
-                    logging.error("Page error: %s %d" % (url, r.status_code))
+                if response.status_code != 200:
+                    logging.error("Page error: %s %d", url, response.status_code)
 
                 if save_file:
                     with open(save_file, 'w') as filehandle:
-                        filehandle.write(r.text)
+                        filehandle.write(response.text)
 
-                return r.text
+                return response.text
         except:
             logging.error("Could not connect")
             raise
@@ -90,10 +90,10 @@ class RenewHandler(object):
                 print "Using config file: %s" % cfile
                 break
             except IOError:
-                logger.debug("Error reading: %s" % cfile, exc_info=True)
+                LOGGER.debug("Error reading: %s", cfile, exc_info=True)
 
         if not self.config.sections():
-            logging.error("ERROR: No configuration file found. %s" % self.config_files)
+            logging.error("ERROR: No configuration file found. %s", self.config_files)
             raise IOError("No configuration file found.")
 
         # This variable is a flag to let the GUI know if backend is currently renewing.
@@ -101,7 +101,7 @@ class RenewHandler(object):
 
     def begin_renew_process(self):
         """ Starts loop of renewing listings on all accounts. """
-        logger.info("Beginning renew processes.")
+        LOGGER.info("Beginning renew processes.")
 
         # This variable is a flag to let the GUI know if backend is currently renewing.
         self.processing = True
@@ -179,7 +179,7 @@ class RenewHandler(object):
 
     def check_for_captcha(self, page):
         result = Soup(page).find('div', id="recaptcha_table")
-        logger.info("Captcha result: %s" % result)
+        LOGGER.info("Captcha result: %s" % result)
         return result
 
     def is_login_success(self, page):
