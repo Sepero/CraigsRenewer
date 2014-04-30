@@ -10,10 +10,10 @@ import sys
 import webbrowser
 import zlib
 
-try
+try:
     import requests
     from bs4 import BeautifulSoup as Soup
-except
+except:
     print "A required library was not found. Please see https://github.com/Sepero/CraigsRenewer#dependencies"
     raise
 
