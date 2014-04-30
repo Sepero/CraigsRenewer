@@ -10,11 +10,12 @@ import sys
 import webbrowser
 import zlib
 
-#try
-import requests
-from bs4 import BeautifulSoup as Soup
-#except
-        #print useful output
+try
+    import requests
+    from bs4 import BeautifulSoup as Soup
+except
+    print "A required library was not found. Please see https://github.com/Sepero/CraigsRenewer#dependencies"
+    raise
 
 # Todo
 # Schedule loop
@@ -27,7 +28,7 @@ logger = logging.getLogger(__name__)
 class WebHandler(object):
     def __init__(self, useragent=""):
         self.session = requests.Session()
-        self.session.verify=True
+        self.session.verify = True
         self.session.headers['User-Agent'] = useragent
     
     def open_url(self, url, method='get', data='', save_file=None):
