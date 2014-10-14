@@ -1,6 +1,6 @@
 Update
 ======
-This code is currently not functional!!!
+THIS CODE IS CURRENTLY NOT FUNCTIONAL!!!
 Craigslist made a modification to their website which prevents this software from accessing account login.
 
 
