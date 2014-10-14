@@ -1,3 +1,9 @@
+Update
+======
+This code is currently not functional!!!
+Craigslist made a modification to their website which prevents this software from accessing account login.
+
+
 CraigsRenewer
 =============
 
@@ -58,8 +64,6 @@ Any support in finishing the graphical interface in welcome.
 
 About Me
 ========
-
-I am currently seeking employment. I am versed in several programming languages, but in recent years I prefer Python above others because it allows me to very quickly create programs that are highly readable and mainainable.
 
 This project was intended for commercial release, but due to legal changes on the craigslist website, I was not able to completely finish it.
 
